@@ -9,7 +9,7 @@ import (
 )
 
 func GetWeather(c echo.Context) error {
-	var result []map[string]string
+	var result map[string]interface{}
 
 	result = weather.GetWeatherFromLocation()
 	if result == nil {

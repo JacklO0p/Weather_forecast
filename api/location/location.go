@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 var location string = "trevignano"
@@ -12,7 +13,7 @@ func GetLocation() string {
 	return location
 }
 
-func GetCoordinates() (latitude float64, longitude float64) {
+func GetCoordinates() (latitude float64, longitude float64, err error) {
 	res, err := http.Get("https://nominatim.openstreetmap.org/search/Trevignano?format=json&addressdetails=1&limit=1")
 	if err != nil {
 		fmt.Printf("Error while getting coordinates, %v", err)
@@ -20,7 +21,7 @@ func GetCoordinates() (latitude float64, longitude float64) {
 
 	defer res.Body.Close()
 
-	location := make(map[string]interface{})
+	var location []map[string]interface{}
 
 	fmt.Print(location)
 
@@ -28,11 +29,20 @@ func GetCoordinates() (latitude float64, longitude float64) {
 
 	if err != nil {
 		fmt.Printf("Error while decoding, %v", err)
-		return 0, 0
+		return 0, 0, nil
 	}
 
-	latitude = location["lat"].(float64)
-	longitude = location["lon"].(float64)
+	latitude, err = strconv.ParseFloat(location[0]["lat"].(string), 2)
+	if err != nil {
+		fmt.Printf("error while parsing[latitude], %v", err)
+		return 0, 0, err
+	}
 
-	return latitude, longitude
+	longitude, err = strconv.ParseFloat(location[0]["lon"].(string), 2)
+	if err != nil {
+		fmt.Printf("error while parsing[longitude]: %v", err)
+		return 0, 0, err
+	}
+
+	return latitude, longitude, nil
 }
