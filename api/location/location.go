@@ -23,8 +23,6 @@ func GetCoordinates() (latitude float64, longitude float64, err error) {
 
 	var location []map[string]interface{}
 
-	fmt.Print(location)
-
 	err = json.NewDecoder(res.Body).Decode(&location)
 
 	if err != nil {

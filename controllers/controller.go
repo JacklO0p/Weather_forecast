@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/JacklO0p/weather_forecast/api/telegram"
 	"github.com/JacklO0p/weather_forecast/api/weather"
 	"github.com/labstack/echo/v4"
 )
@@ -17,5 +18,9 @@ func GetWeather(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "")
 	}
 
-	return c.JSON(http.StatusOK, result)
+	finalRes := fmt.Sprintf("%v", result)
+	fmt.Print(finalRes)
+	telegram.SendTelegramMessage(finalRes, telegram.CHATID)
+
+	return c.JSON(http.StatusOK, finalRes)
 }
