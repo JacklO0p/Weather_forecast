@@ -18,9 +18,20 @@ func GetWeather(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "")
 	}
 
-	finalRes := fmt.Sprintf("%v", result)
-	fmt.Print(finalRes)
-	telegram.SendTelegramMessage(finalRes, telegram.CHATID)
+	fmt.Print(result, "\n")
+	dividedMessage := telegram.DivideMessages(result)
 
-	return c.JSON(http.StatusOK, finalRes)
+	var r string = ""
+
+	for index := range dividedMessage {
+		r += dividedMessage[index]
+	}
+	//finalMessage := telegram.FixMessage(dividedMessage)
+
+	//fmt.Print(finalMessage)
+
+	fmt.Print(r)
+	telegram.SendTelegramMessage(r, telegram.CHATID)
+
+	return c.JSON(http.StatusOK, result)
 }

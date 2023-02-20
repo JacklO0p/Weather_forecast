@@ -3,23 +3,28 @@ package telegram
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 )
 
 type TelegramMessage struct {
-	CHAT_ID     string `json:"chat_id"`
-	Text        string `json:"text"`
-	PPARSE_MODE string `json:"parse_mode"`
+	CHAT_ID    string `json:"chat_id"`
+	Text       string `json:"text"`
+	PARSE_MODE string `json:"parse_mode"`
 }
 
 func SendTelegramMessage(message, chatId string) {
 	token := "bot" + TOKEN
 	sendMessageUrl := "https://api.telegram.org/" + token + "/sendMessage"
+	message = strings.ReplaceAll(message, "-", "\\-")
 	message = strings.ReplaceAll(message, ".", "\\.")
+	message = strings.ReplaceAll(message, "_", "\\_")
+	message = strings.ReplaceAll(message, "{", "\\{")
+	message = strings.ReplaceAll(message, "}", "\\}")
 	msg := new(TelegramMessage)
-	msg.PPARSE_MODE = "MarkdownV2"
+	msg.PARSE_MODE = "MarkdownV2"
 	msg.Text = message
 	msg.CHAT_ID = chatId
 
@@ -45,9 +50,9 @@ func SendTelegramMessage(message, chatId string) {
 		defer response.Body.Close()
 	}
 
-	//log.Println("response Status:", response.Status)
-	//log.Println("response Headers:", response.Header)
-	//body, _ := ioutil.ReadAll(response.Body)
-	//log.Println("response Body:", string(body))
+	log.Println("response Status:", response.Status)
+	log.Println("response Headers:", response.Header)
+	body, _ := ioutil.ReadAll(response.Body)
+	log.Println("response Body:", string(body))
 
 }
