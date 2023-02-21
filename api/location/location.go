@@ -5,16 +5,26 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/JacklO0p/weather_forecast/api/telegram"
+	"github.com/JacklO0p/weather_forecast/models"
 )
 
-var location string = "Trevignano"
-
-func GetLocation() string {
-	return location
-}
-
 func GetCoordinates() (latitude float64, longitude float64, err error) {
-	res, err := http.Get("https://nominatim.openstreetmap.org/search/Trevignano?format=json&addressdetails=1&limit=1")
+	var res *http.Response
+
+	if len(telegram.CurrentLocation) == 0 {
+		res, err = http.Get("https://nominatim.openstreetmap.org/search/Trevignano?format=json&addressdetails=1&limit=1")
+		telegram.CurrentLocation = "Trevignano"
+	} else {
+		if isValid(telegram.CurrentLocation) {
+			res, err = http.Get("https://nominatim.openstreetmap.org/search/" + telegram.CurrentLocation + "?format=json&addressdetails=1&limit=1")
+		} else {
+			return -100000000, -100000000, nil
+		}
+
+	}
+
 	if err != nil {
 		fmt.Printf("Error while getting coordinates, %v", err)
 	}
@@ -43,4 +53,22 @@ func GetCoordinates() (latitude float64, longitude float64, err error) {
 	}
 
 	return latitude, longitude, nil
+}
+
+func isValid(city string) bool {
+
+	res, err := http.Get("http://www.weather-forecast.com/locations/ac_location_name?query=" + city)
+	if err != nil {
+		fmt.Print("\nError while getting the city api ", err, "\n")
+	}
+
+	cityCheck := models.CityValidator{}
+
+	err = json.NewDecoder(res.Body).Decode(&cityCheck)
+
+	if cityCheck.NearObjCount != 0 {
+		return true
+	}
+
+	return false
 }

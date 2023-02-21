@@ -21,7 +21,10 @@ func GetWeatherFromLocation() (resp map[string]interface{}) {
 		fmt.Print("error while getting coordinates")
 	}
 
-	
+	if latitude == -100000000 && longitude == -100000000 {
+		return nil
+	}
+
 
 	url := "https://api.open-meteo.com/v1/forecast?latitude=" + strconv.FormatFloat(latitude, 'f', 2, 64) + "&longitude=" + strconv.FormatFloat(longitude, 'f', 2, 64) + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours&current_weather=true&timezone=Europe%2FBerlin&start_date=" + CurrentDateString + "&end_date=" + TomorrowDateString + ""
 	res, err := http.Get(url)

@@ -12,7 +12,7 @@ type Weather struct {
 		ApparentTemperatureMax []float64 `json:"apparent_temperature_max"`
 		ApparentTemperatureMin []float64 `json:"apparent_temperature_min"`
 		PrecipitationHours     []int     `json:"precipitation_hours"`
-		RainSum                []int     `json:"rain_sum"`
+		RainSum                []float64 `json:"rain_sum"`
 		Temperature2MMax       []float64 `json:"temperature_2m_max"`
 		Temperature2MMin       []float64 `json:"temperature_2m_min"`
 		Time                   []string  `json:"time"`

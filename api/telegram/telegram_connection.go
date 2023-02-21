@@ -15,20 +15,20 @@ type TelegramMessage struct {
 	PARSE_MODE string `json:"parse_mode"`
 }
 
-func SendTelegramMessage(message, chatId string) {
+func SendTelegramMessage(Message, chatId string) {
 	token := "bot" + TOKEN
 	sendMessageUrl := "https://api.telegram.org/" + token + "/sendMessage"
 
-	message = strings.ReplaceAll(message, "-", "\\-")
-	message = strings.ReplaceAll(message, ".", "\\.")
-	message = strings.ReplaceAll(message, "_", "\\_")
-	message = strings.ReplaceAll(message, "{", "\\{")
-	message = strings.ReplaceAll(message, "}", "\\}")
-	message = strings.ReplaceAll(message, "!", "\\!")
-
+	Message = strings.ReplaceAll(Message, "-", "\\-")
+	Message = strings.ReplaceAll(Message, ".", "\\.")
+	Message = strings.ReplaceAll(Message, "_", "\\_")
+	Message = strings.ReplaceAll(Message, "{", "\\{")
+	Message = strings.ReplaceAll(Message, "}", "\\}")
+	Message = strings.ReplaceAll(Message, "!", "\\!")
+	
 	msg := new(TelegramMessage)
 	msg.PARSE_MODE = "MarkdownV2"
-	msg.Text = message
+	msg.Text = Message
 	msg.CHAT_ID = chatId
 
 	jBytes, err := json.Marshal(&msg)

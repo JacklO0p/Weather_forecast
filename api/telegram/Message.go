@@ -26,7 +26,7 @@ func GetString(message map[string]interface{}) string {
 
 	err = json.Unmarshal(jsonBytes, &weatherData)
 	if err != nil {
-		fmt.Print("error while unm,arshaling, ", err)
+		fmt.Print("\nerror while unmarshaling, ", err)
 	}
 
 	var checkRain = GetRains(weatherData)
@@ -38,12 +38,11 @@ func GetString(message map[string]interface{}) string {
 	return ""
 }
 
-func GetRains(weather models.Weather) (res bool) {
+func GetRains(weather models.Weather) (bool) {
 
-	control := weather.Daily.RainSum
-
-	for index, _ := range control {
-		if control[index] != 0 {
+	for index, _ := range weather.Daily.RainSum {
+		if weather.Daily.RainSum[index] != 0 {
+			fmt.Print("\n\n\n\n", weather.Daily.RainSum[index], "\n\n\n\n")
 			return true
 		}
 	}
