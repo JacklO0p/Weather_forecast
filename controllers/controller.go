@@ -15,23 +15,19 @@ func GetWeather(c echo.Context) error {
 	result = weather.GetWeatherFromLocation()
 	if result == nil {
 		fmt.Print("Error while getting the value, result is nil")
+
+		telegram.SendTelegramMessage("Found error in the code, the program will now shut down", telegram.CHATID)
 		return c.JSON(http.StatusBadRequest, "")
 	}
 
 	fmt.Print(result, "\n")
 	dividedMessage := telegram.DivideMessages(result)
 
-	var r string = ""
-
-	for index := range dividedMessage {
-		r += dividedMessage[index]
+	if dividedMessage == "" {
+		telegram.SendTelegramMessage("no raining today: " + weather.CurrentDateString, telegram.CHATID)
+	} else {
+		telegram.SendTelegramMessage(dividedMessage, telegram.CHATID)
 	}
-	//finalMessage := telegram.FixMessage(dividedMessage)
-
-	//fmt.Print(finalMessage)
-
-	fmt.Print(r)
-	telegram.SendTelegramMessage(r, telegram.CHATID)
 
 	return c.JSON(http.StatusOK, result)
 }

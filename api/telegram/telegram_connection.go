@@ -18,11 +18,14 @@ type TelegramMessage struct {
 func SendTelegramMessage(message, chatId string) {
 	token := "bot" + TOKEN
 	sendMessageUrl := "https://api.telegram.org/" + token + "/sendMessage"
+
 	message = strings.ReplaceAll(message, "-", "\\-")
 	message = strings.ReplaceAll(message, ".", "\\.")
 	message = strings.ReplaceAll(message, "_", "\\_")
 	message = strings.ReplaceAll(message, "{", "\\{")
 	message = strings.ReplaceAll(message, "}", "\\}")
+	message = strings.ReplaceAll(message, "!", "\\!")
+
 	msg := new(TelegramMessage)
 	msg.PARSE_MODE = "MarkdownV2"
 	msg.Text = message

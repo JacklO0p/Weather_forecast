@@ -9,6 +9,11 @@ import (
 
 	"github.com/JacklO0p/weather_forecast/api/location"
 )
+	var Today = time.Now()
+    var Tomorrow = Today.AddDate(0, 0, 1)
+
+    var CurrentDateString = Today.Format("2006-01-02")
+    var TomorrowDateString = Tomorrow.Format("2006-01-02")
 
 func GetWeatherFromLocation() (resp map[string]interface{}) {
 	latitude, longitude, err := location.GetCoordinates()
@@ -16,13 +21,9 @@ func GetWeatherFromLocation() (resp map[string]interface{}) {
 		fmt.Print("error while getting coordinates")
 	}
 
-	today := time.Now()
-    tomorrow := today.AddDate(0, 0, 1)
+	
 
-    currentDateString := today.Format("2006-01-02")
-    tomorrowDateString := tomorrow.Format("2006-01-02")
-
-	url := "https://api.open-meteo.com/v1/forecast?latitude=" + strconv.FormatFloat(latitude, 'f', 2, 64) + "&longitude=" + strconv.FormatFloat(longitude, 'f', 2, 64) + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours&current_weather=true&timezone=Europe%2FBerlin&start_date=" + currentDateString + "&end_date=" + tomorrowDateString + ""
+	url := "https://api.open-meteo.com/v1/forecast?latitude=" + strconv.FormatFloat(latitude, 'f', 2, 64) + "&longitude=" + strconv.FormatFloat(longitude, 'f', 2, 64) + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours&current_weather=true&timezone=Europe%2FBerlin&start_date=" + CurrentDateString + "&end_date=" + TomorrowDateString + ""
 	res, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("error while getting weather values, %v", err)

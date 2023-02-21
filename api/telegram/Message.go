@@ -1,33 +1,86 @@
 package telegram
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
+
+	"github.com/JacklO0p/weather_forecast/models"
 )
 
-func DivideMessages(message map[string]interface{}) []string {
-	// Convert the input map to a JSON string
-	jsonString, err := json.Marshal(message)
+func DivideMessages(message map[string]interface{}) string {
+	stringMessage := GetString(message)
+
+	fmt.Print("\n\n\n", stringMessage, "\n\n\n\n")
+
+	return stringMessage
+}
+
+func GetString(message map[string]interface{}) string {
+	jsonBytes, err := json.Marshal(message)
 	if err != nil {
-		fmt.Println("Error marshalling input map to JSON string:", err)
-		return nil
+		fmt.Println("error while marshaling data to JSON:", err)
+		return ""
 	}
 
-	// Remove square brackets from the JSON string
-	jsonString = bytes.ReplaceAll(jsonString, []byte("["), []byte(""))
-	jsonString = bytes.ReplaceAll(jsonString, []byte("]"), []byte("\n"))
-	jsonString = bytes.ReplaceAll(jsonString, []byte("{"), []byte("\n"))
-	jsonString = bytes.ReplaceAll(jsonString, []byte("}"), []byte("\n\n"))
+	weatherData := models.Weather{}
 
-	// Split the JSON string by closing curly braces
-	jsonSplit := strings.Split(string(jsonString), "}")
-
-	// Trim whitespace and append a closing curly brace to each split string
-	for i := range jsonSplit {
-		jsonSplit[i] = strings.TrimSpace(jsonSplit[i]) + "}\n"
+	err = json.Unmarshal(jsonBytes, &weatherData)
+	if err != nil {
+		fmt.Print("error while unm,arshaling, ", err)
 	}
 
-	return jsonSplit
+	var checkRain = GetRains(weatherData)
+
+	if checkRain {
+		return GetFormattedString(weatherData)
+	}
+
+	return ""
+}
+
+func GetRains(weather models.Weather) (res bool) {
+
+	control := weather.Daily.RainSum
+
+	for index, _ := range control {
+		if control[index] != 0 {
+			return true
+		}
+	}
+
+	return false
+}
+
+func GetFormattedString(message models.Weather) (res string) {
+
+	res += "***Rain Alert!***\n\n"
+	
+	res += "Apparent Temperature {\n      max: "
+	
+	for index, _ := range message.Daily.ApparentTemperatureMax {
+		res += fmt.Sprintf("%v", message.Daily.ApparentTemperatureMax[index]) + ";   "
+	}
+
+	res += "\n      min: "
+	
+	for index, _ := range message.Daily.ApparentTemperatureMin {
+		res += fmt.Sprintf("%v", message.Daily.ApparentTemperatureMin[index]) + ";   "
+	}
+	
+	res += "\n}\n\nRaining hours {\n      "
+	
+	for index, _ := range message.Daily.PrecipitationHours {
+		res += fmt.Sprintf("%v", message.Daily.PrecipitationHours[index]) + ";  "
+	}
+	
+	res += "\n}\n\nTotal rain [mm] {\n      "
+	
+	for index, _ := range message.Daily.RainSum {
+		res += fmt.Sprintf("%v", message.Daily.RainSum[index]) + ";  "
+	}
+
+	res += "\n}"
+
+
+	return res
 }

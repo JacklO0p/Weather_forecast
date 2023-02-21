@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var location string = "trevignano"
+var location string = "Trevignano"
 
 func GetLocation() string {
 	return location
