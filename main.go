@@ -1,67 +1,50 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"os"
-	"os/signal"
-	"strings"
+	"time"
 
-	"github.com/JacklO0p/weather_forecast/api/telegram"
-	"github.com/JacklO0p/weather_forecast/routes"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
-	"github.com/labstack/echo/v4"
+	"github.com/JacklO0p/weather_forecast/api/telegram/listener"
+	"github.com/JacklO0p/weather_forecast/api/weather"
+	"github.com/JacklO0p/weather_forecast/controllers"
 )
 
 var Check []string
 
 func main() {
+	var beginning int = 1
 
 	//start telegram bot listener
-	go telegramListener()
+	listener.Inizializer()
+	go listener.TelegramListener()
 
-	e := echo.New()
+    
 
-	routes.RegisteredRoutes(e)
+	if listener.CheckToStart || beginning == 1 {
+		beginning = 2
 
-	e.Logger.Fatal(e.Start(":1323"))
-}
+		duration := time.Duration(weather.TimeFrame) * time.Minute
 
-func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
+		ticker := time.NewTicker(duration)
+		defer ticker.Stop()
 
-	command := update.Message.Text
+		for {
+			select {
+				
+			case <-ticker.C:
 
-	if len(command) >= 2 {
-		Check := strings.Split(command, " ")
+				if duration != time.Duration(weather.TimeFrame) * time.Minute {
+					duration = time.Duration(weather.TimeFrame) * time.Minute
+					ticker.Stop()
+				}
 
-		if Check[0] == "/location" {
-			telegram.CurrentLocation = Check[1]
+				ticker = time.NewTicker(duration)
 
-			fmt.Print(telegram.CurrentLocation)
-
-			b.SendMessage(ctx, &bot.SendMessageParams{
-
-				ChatID: update.Message.Chat.ID,
-				Text:   "Location updated succesfully!\nNow recording " + Check[1],
-			})
+				controllers.GetWeather()
+				fmt.Print("\nReport sent successfully\n")
+			}
 		}
 	}
+	
 
-}
-
-func telegramListener() {
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer cancel()
-
-	opts := []bot.Option{
-		bot.WithDefaultHandler(handler),
-	}
-
-	b, err := bot.New(telegram.TOKEN, opts...)
-	if err != nil {
-		panic(err)
-	}
-
-	b.Start(ctx)
 }

@@ -7,18 +7,16 @@ import (
 	"github.com/JacklO0p/weather_forecast/models"
 )
 
-func DivideMessages(message map[string]interface{}) string {
-	stringMessage := GetString(message)
-
-	fmt.Print("\n\n\n", stringMessage, "\n\n\n\n")
+func DivideMessages(Message map[string]interface{}) string {
+	stringMessage := GetString(Message)
 
 	return stringMessage
 }
 
-func GetString(message map[string]interface{}) string {
-	jsonBytes, err := json.Marshal(message)
+func GetString(Message map[string]interface{}) string {
+	jsonBytes, err := json.Marshal(Message)
 	if err != nil {
-		fmt.Println("error while marshaling data to JSON:", err)
+		fmt.Println("Error while marshaling data to JSON:", err)
 		return ""
 	}
 
@@ -26,7 +24,7 @@ func GetString(message map[string]interface{}) string {
 
 	err = json.Unmarshal(jsonBytes, &weatherData)
 	if err != nil {
-		fmt.Print("\nerror while unmarshaling, ", err)
+		fmt.Print("\nError while unmarshaling, ", err)
 	}
 
 	var checkRain = GetRains(weatherData)
@@ -42,7 +40,6 @@ func GetRains(weather models.Weather) (bool) {
 
 	for index, _ := range weather.Daily.RainSum {
 		if weather.Daily.RainSum[index] != 0 {
-			fmt.Print("\n\n\n\n", weather.Daily.RainSum[index], "\n\n\n\n")
 			return true
 		}
 	}
@@ -50,32 +47,32 @@ func GetRains(weather models.Weather) (bool) {
 	return false
 }
 
-func GetFormattedString(message models.Weather) (res string) {
+func GetFormattedString(Message models.Weather) (res string) {
 
 	res += "***Rain Alert!***\n\n"
 	
 	res += "Apparent Temperature {\n      max: "
 	
-	for index, _ := range message.Daily.ApparentTemperatureMax {
-		res += fmt.Sprintf("%v", message.Daily.ApparentTemperatureMax[index]) + ";   "
+	for index, _ := range Message.Daily.ApparentTemperatureMax {
+		res += fmt.Sprintf("%v", Message.Daily.ApparentTemperatureMax[index]) + ";   "
 	}
 
 	res += "\n      min: "
 	
-	for index, _ := range message.Daily.ApparentTemperatureMin {
-		res += fmt.Sprintf("%v", message.Daily.ApparentTemperatureMin[index]) + ";   "
+	for index, _ := range Message.Daily.ApparentTemperatureMin {
+		res += fmt.Sprintf("%v", Message.Daily.ApparentTemperatureMin[index]) + ";   "
 	}
 	
 	res += "\n}\n\nRaining hours {\n      "
 	
-	for index, _ := range message.Daily.PrecipitationHours {
-		res += fmt.Sprintf("%v", message.Daily.PrecipitationHours[index]) + ";  "
+	for index, _ := range Message.Daily.PrecipitationHours {
+		res += fmt.Sprintf("%v", Message.Daily.PrecipitationHours[index]) + ";  "
 	}
 	
 	res += "\n}\n\nTotal rain [mm] {\n      "
 	
-	for index, _ := range message.Daily.RainSum {
-		res += fmt.Sprintf("%v", message.Daily.RainSum[index]) + ";  "
+	for index, _ := range Message.Daily.RainSum {
+		res += fmt.Sprintf("%v", Message.Daily.RainSum[index]) + ";  "
 	}
 
 	res += "\n}"
