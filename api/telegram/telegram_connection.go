@@ -25,7 +25,7 @@ func SendTelegramMessage(Message, chatId string) {
 	Message = strings.ReplaceAll(Message, "{", "\\{")
 	Message = strings.ReplaceAll(Message, "}", "\\}")
 	Message = strings.ReplaceAll(Message, "!", "\\!")
-	
+
 	msg := new(TelegramMessage)
 	msg.PARSE_MODE = "MarkdownV2"
 	msg.Text = Message

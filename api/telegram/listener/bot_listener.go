@@ -2,7 +2,6 @@ package listener
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -11,14 +10,32 @@ import (
 	"github.com/JacklO0p/weather_forecast/api/telegram"
 	"github.com/JacklO0p/weather_forecast/api/weather"
 	"github.com/JacklO0p/weather_forecast/controllers"
+	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
+	models2 "github.com/JacklO0p/weather_forecast/models"
 )
-
-var CheckToStart = false
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	command := strings.ToLower(update.Message.Text)
+
+	if !globals.IsProgramStarted {
+		if command == "/start" {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Program started, use /help for the list of available commands",
+			})
+		} else {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Must first start the bot using /start",
+			})
+
+			return
+		}
+
+		globals.IsProgramStarted = true
+	}
 
 	if len(command) >= 1 {
 
@@ -31,7 +48,7 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						Text:   "The program will now end, c'ya",
 					})
 
-					os.Exit(http.StatusOK)
+					ctx.Done()
 				}
 
 				if command == "/timeframe" {
@@ -52,15 +69,6 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					controllers.GetWeather()
 				}
 
-				if command == "/start" {
-					b.SendMessage(ctx, &bot.SendMessageParams{
-						ChatID: update.Message.Chat.ID,
-						Text:   "Program started",
-					})
-
-					CheckToStart = true
-				}
-
 			} else {
 				b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID: update.Message.Chat.ID,
@@ -76,12 +84,33 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 				//new location command
 				if Check[0] == "/location" {
-					telegram.CurrentLocation = Check[1]
+					globals.CurrentLocation = Check[1]
 
 					b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID: update.Message.Chat.ID,
 						Text:   "Location updated succesfully!\nNow recording " + Check[1],
 					})
+
+					user := models2.User{
+						ChatID:    update.Message.Chat.ID,
+						Location:  Check[1],
+						Timeframe: weather.TimeFrame,
+					}
+
+					err := models2.UpdateUser(&user)
+					if err != nil {
+						b.SendMessage(ctx, &bot.SendMessageParams{
+							ChatID: update.Message.Chat.ID,
+							Text:   "Failed to update location",
+						})
+
+					} else {
+						b.SendMessage(ctx, &bot.SendMessageParams{
+							ChatID: update.Message.Chat.ID,
+							Text:   "Location updated succesfully!\nNow recording " + Check[1],
+						})
+					}
+					
 				}
 
 				//timeframe command

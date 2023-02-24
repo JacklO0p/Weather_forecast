@@ -6,19 +6,19 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/JacklO0p/weather_forecast/api/telegram"
+	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/JacklO0p/weather_forecast/models"
 )
 
 func GetCoordinates() (latitude float64, longitude float64, err error) {
 	var res *http.Response
 
-	if len(telegram.CurrentLocation) == 0 {
+	if len(globals.CurrentLocation) == 0 {
 		res, err = http.Get("https://nominatim.openstreetmap.org/search/Trevignano?format=json&addressdetails=1&limit=1")
-		telegram.CurrentLocation = "Trevignano"
+		globals.CurrentLocation = "Trevignano"
 	} else {
-		if isValid(telegram.CurrentLocation) {
-			res, err = http.Get("https://nominatim.openstreetmap.org/search/" + telegram.CurrentLocation + "?format=json&addressdetails=1&limit=1")
+		if isValid(globals.CurrentLocation) {
+			res, err = http.Get("https://nominatim.openstreetmap.org/search/" + globals.CurrentLocation + "?format=json&addressdetails=1&limit=1")
 		} else {
 			return -100000000, -100000000, nil
 		}
