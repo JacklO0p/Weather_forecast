@@ -6,7 +6,6 @@ import (
 
 	"github.com/JacklO0p/weather_forecast/api/telegram/listener"
 	"github.com/JacklO0p/weather_forecast/api/weather"
-	"github.com/JacklO0p/weather_forecast/controllers"
 	"github.com/JacklO0p/weather_forecast/utils"
 )
 
@@ -18,7 +17,7 @@ func main() {
 
 	//start telegram bot listener
 	listener.Inizializer()
-	go listener.TelegramListener()
+	go listener.TelegramListener(0)
 
 	duration := time.Duration(weather.TimeFrame) * time.Minute
 
@@ -37,7 +36,7 @@ func main() {
 
 			ticker = time.NewTicker(duration)
 
-			go controllers.GetWeather()
+			listener.TelegramListener(1)
 			fmt.Print("\nReport sent successfully\n")
 		}
 	}

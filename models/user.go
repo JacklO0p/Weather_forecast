@@ -12,6 +12,9 @@ type User struct {
 	ChatID    int64  `gorm:"unique" json:"chatid"`
 	Location  string `json:"location"`
 	Timeframe int    `json:"Timeframe"`
+	ApparentTemperature string `json:"apparenttemperature"`
+	RainingHours        int    `json:"raininghours"`
+	TotalRain           int    `json:"totalrain"`
 }
 
 func (u *User) UpdateLocation(location int) error {

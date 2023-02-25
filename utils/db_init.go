@@ -22,7 +22,7 @@ func Connect() error {
 }
 
 func MigrateDB() error {
-	err := globals.Db.AutoMigrate(&models.User{}, &models.WeatherMsg{})
+	err := globals.Db.AutoMigrate(&models.User{})
 	if err != nil {
 		fmt.Print("Error while migrating database", err)
 		return err
