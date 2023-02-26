@@ -10,7 +10,7 @@ var CommandsList [10]models.Command
 
 func isCommandPresent(com string) bool {
 
-	for index, _ := range CommandsList {
+	for index := range CommandsList {
 		if strings.Contains(CommandsList[index].Com, com) {
 			return true
 		}
@@ -22,16 +22,15 @@ func isCommandPresent(com string) bool {
 func Inizializer() {
 	CommandsList[0].Com = "/start"
 	CommandsList[1].Com = "/location <city name>"
-	CommandsList[2].Com = "/meteo"
-	CommandsList[3].Com = "/timeframe"
-	CommandsList[4].Com = "/newtimeframe <time frame in minutes>"
+	CommandsList[2].Com = "/report"
+	CommandsList[3].Com = "/timer"
+	CommandsList[4].Com = "/newtimer <time frame in minutes>"
 	CommandsList[5].Com = "/help"
-	CommandsList[6].Com = "/stop"
 }
 
 func ListOfCommands() (list string) {
 
-	for index, _ := range CommandsList {
+	for index := range CommandsList {
 		list += CommandsList[index].Com + "\n"
 	}
 

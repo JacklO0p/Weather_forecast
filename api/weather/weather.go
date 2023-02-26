@@ -9,8 +9,8 @@ import (
 	"github.com/JacklO0p/weather_forecast/api/location"
 )
 
-func GetWeatherFromLocation() (resp map[string]interface{}) {
-	latitude, longitude, err := location.GetCoordinates()
+func GetWeatherFromLocation(loca string) (resp map[string]interface{}) {
+	latitude, longitude, err := location.GetCoordinates(loca)
 	if err != nil {
 		fmt.Print("Error while getting coordinates")
 	}

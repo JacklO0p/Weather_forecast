@@ -4,25 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
-	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/JacklO0p/weather_forecast/models"
 )
 
-func GetCoordinates() (latitude float64, longitude float64, err error) {
+func GetCoordinates(loca string) (latitude float64, longitude float64, err error) {
 	var res *http.Response
 
-	if len(globals.CurrentLocation) == 0 {
-		res, err = http.Get("https://nominatim.openstreetmap.org/search/Trevignano?format=json&addressdetails=1&limit=1")
-		globals.CurrentLocation = "Trevignano"
+	if isValid(loca) {
+		res, err = http.Get("https://nominatim.openstreetmap.org/search/" + url.QueryEscape(loca) + "?format=json&addressdetails=1&limit=1")
 	} else {
-		if isValid(globals.CurrentLocation) {
-			res, err = http.Get("https://nominatim.openstreetmap.org/search/" + globals.CurrentLocation + "?format=json&addressdetails=1&limit=1")
-		} else {
-			return -100000000, -100000000, nil
-		}
-
+		return -100000000, -100000000, nil
 	}
 
 	if err != nil {
@@ -34,6 +28,7 @@ func GetCoordinates() (latitude float64, longitude float64, err error) {
 	var location []map[string]interface{}
 
 	err = json.NewDecoder(res.Body).Decode(&location)
+
 
 	if err != nil {
 		fmt.Printf("Error while decoding, %v", err)
@@ -57,7 +52,7 @@ func GetCoordinates() (latitude float64, longitude float64, err error) {
 
 func isValid(city string) bool {
 
-	res, err := http.Get("http://www.weather-forecast.com/locations/ac_location_name?query=" + city)
+	res, err := http.Get("http://www.weather-forecast.com/locations/ac_location_name?query=" + url.QueryEscape(city))
 	if err != nil {
 		fmt.Print("\nError while getting the city api ", err, "\n")
 	}
