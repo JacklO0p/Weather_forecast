@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/JacklO0p/weather_forecast/api/location"
+	"github.com/JacklO0p/weather_forecast/globals"
 )
 
 func GetWeatherFromLocation(loca string) (resp map[string]interface{}) {
@@ -19,7 +20,7 @@ func GetWeatherFromLocation(loca string) (resp map[string]interface{}) {
 		return nil
 	}
 
-	url := "https://api.open-meteo.com/v1/forecast?latitude=" + strconv.FormatFloat(latitude, 'f', 2, 64) + "&longitude=" + strconv.FormatFloat(longitude, 'f', 2, 64) + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours&current_weather=true&timezone=Europe%2FBerlin&start_date=" + CurrentDateString + "&end_date=" + TomorrowDateString + ""
+	url := "https://api.open-meteo.com/v1/forecast?latitude=" + strconv.FormatFloat(latitude, 'f', 2, 64) + "&longitude=" + strconv.FormatFloat(longitude, 'f', 2, 64) + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,precipitation_hours&current_weather=true&timezone=Europe%2FBerlin&start_date=" + globals.CurrentDateString + "&end_date=" + globals.TomorrowDateString + ""
 	res, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("Error while getting weather values, %v", err)

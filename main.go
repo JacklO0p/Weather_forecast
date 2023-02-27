@@ -8,7 +8,6 @@ import (
 
 	"github.com/JacklO0p/weather_forecast/api/telegram"
 	"github.com/JacklO0p/weather_forecast/api/telegram/listener"
-	"github.com/JacklO0p/weather_forecast/api/weather"
 	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/JacklO0p/weather_forecast/models"
 	"github.com/JacklO0p/weather_forecast/utils"
@@ -26,7 +25,7 @@ func main() {
 	listener.Inizializer()
 	go listener.TelegramListener()
 
-	duration := time.Duration(weather.TimeFrame) * time.Minute
+	duration := time.Duration(globals.TimeFrame) * time.Minute
 
 	ticker := time.NewTicker(duration)
 	defer ticker.Stop()
@@ -36,8 +35,8 @@ func main() {
 
 		case <-ticker.C:
 			log.Println("mannaggia cristo")
-			if duration != time.Duration(weather.TimeFrame)*time.Minute {
-				duration = time.Duration(weather.TimeFrame) * time.Minute
+			if duration != time.Duration(globals.TimeFrame) * time.Minute {
+				duration = time.Duration(globals.TimeFrame) * time.Minute
 				ticker.Stop()
 			}
 
@@ -50,7 +49,7 @@ func main() {
 
 				if u.Location != "" && u.SendMessage {
 
-					listener.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
+					globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
 						ChatID: u.ChatID,
 						Text:   telegram.GetReport(u.Location) + u.Location,
 					})
@@ -63,9 +62,4 @@ func main() {
 		}
 	}
 
-
-		
-
 }
-
-

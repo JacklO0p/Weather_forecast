@@ -8,14 +8,11 @@ import (
 	"strings"
 
 	"github.com/JacklO0p/weather_forecast/api/telegram"
-	"github.com/JacklO0p/weather_forecast/api/weather"
 	"github.com/JacklO0p/weather_forecast/globals"
 	models2 "github.com/JacklO0p/weather_forecast/models"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
-
-var Bot *bot.Bot
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
@@ -43,7 +40,7 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 				}
 
 				if command == "/timer" {
-					SendMessage(ctx, b, update, "Current timer: "+strconv.Itoa(weather.TimeFrame)+" minutes")
+					SendMessage(ctx, b, update, "Current timer: "+strconv.Itoa(globals.TimeFrame)+" minutes")
 				}
 
 				if command == "/help" {
@@ -72,7 +69,7 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					user := models2.User{
 						ChatID:   update.Message.Chat.ID,
 						Location: location,
-						Timer:    weather.TimeFrame,
+						Timer:    globals.TimeFrame,
 					}
 
 					err := models2.UpdateUser(&user)
@@ -91,11 +88,11 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 						SendMessage(ctx, b, update, "Couldn't update timer\nIt will now be set to 240 minute")
 					} else {
 						SendMessage(ctx, b, update, "Timer updated succesfully!\nIt will now be set to "+Check[1]+" minutes")
-					
+
 						user := models2.User{
-								ChatID:   update.Message.Chat.ID,
-								Timer:    newTimer,
-							}
+							ChatID: update.Message.Chat.ID,
+							Timer:  newTimer,
+						}
 
 						err = models2.UpdateUser(&user)
 						if err != nil {
@@ -103,8 +100,6 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 						}
 					}
-					
-					
 
 				}
 
@@ -132,7 +127,7 @@ func TelegramListener() {
 		panic(err)
 	}
 
-	Bot = b
+	globals.Bot = b
 
 	b.Start(ctx)
 }
