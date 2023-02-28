@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/JacklO0p/weather_forecast/api/telegram"
@@ -34,11 +33,13 @@ func main() {
 		select {
 
 		case <-ticker.C:
-			log.Println("mannaggia cristo")
 			if duration != time.Duration(globals.TimeFrame) * time.Minute {
 				duration = time.Duration(globals.TimeFrame) * time.Minute
 				ticker.Stop()
 			}
+
+			fmt.Print("new duration: ", duration)
+
 
 			ticker = time.NewTicker(duration)
 
