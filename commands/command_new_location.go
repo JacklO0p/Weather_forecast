@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	models2 "github.com/JacklO0p/weather_forecast/models"
 	"github.com/go-telegram/bot"
@@ -23,7 +24,7 @@ func (c *CommandNewLocation) Execute(ctx context.Context, b *bot.Bot, update *mo
 
 	user := models2.User{
 		ChatID:   update.Message.Chat.ID,
-		Location: args[0],
+		Location: strings.Join(args, " "),
 	}
 
 	err := models2.UpdateUser(&user)

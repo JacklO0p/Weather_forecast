@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
@@ -24,11 +25,19 @@ func (c *CommandProcessor) Process(ctx context.Context, b *bot.Bot, update *mode
 
 	if len(command) >= 1 {
 		check := strings.Split(command, " ")
-	fmt.Println("Comando non presente: " + check[0])
+
+		if check[0] != "/start" && !globals.IsProgramStarted {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Program not started, /start to start the program",
+			})
+
+			return nil
+		}
 
 		if check[0] == "/help" {
 			var list string
-			
+
 			for _, cmd := range c.commands {
 				list += "- " + cmd.Command() + "   |   " + cmd.Description() + "\n"
 			}
@@ -48,7 +57,6 @@ func (c *CommandProcessor) Process(ctx context.Context, b *bot.Bot, update *mode
 		}
 
 	}
-
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
