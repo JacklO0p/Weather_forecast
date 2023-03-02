@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/JacklO0p/weather_forecast/models"
 )
 
@@ -29,7 +30,6 @@ func GetCoordinates(loca string) (latitude float64, longitude float64, err error
 
 	err = json.NewDecoder(res.Body).Decode(&location)
 
-
 	if err != nil {
 		fmt.Printf("Error while decoding, %v", err)
 		return 0, 0, nil
@@ -46,6 +46,17 @@ func GetCoordinates(loca string) (latitude float64, longitude float64, err error
 		fmt.Printf("Error while parsing[longitude]: %v", err)
 		return 0, 0, err
 	}
+
+	user := models.User{
+		Location: loca,
+	}
+
+	globals.Db.Where("Location=?", loca).First(&user)
+
+	user.Latitude = strconv.FormatFloat(latitude, 'f', 2, 64)
+	user.Longitude = strconv.FormatFloat(longitude, 'f', 2, 64)
+
+	models.UpdateUser(&user)
 
 	return latitude, longitude, nil
 }

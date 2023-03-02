@@ -50,10 +50,12 @@ func main() {
 				for _, u := range user {
 	
 					if u.Location != "" && u.SendMessage {
-	
+
+						globals.TimerDuration = time.Duration(u.Timer) * time.Minute
+
 						globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
 							ChatID: u.ChatID,
-							Text:   telegram.GetReport(u.Location) + u.Location,
+							Text:   telegram.GetReport(u.Location) + "\n\nLocation: " + u.Location + "\n\nNext report in " + globals.TimerDuration.String(),
 						})
 	
 					}

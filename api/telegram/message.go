@@ -80,8 +80,6 @@ func userString(weather models.Weather) string {
 	for index := range weather.Daily.RainSum {
 		message += "    " + strconv.FormatFloat(weather.Daily.RainSum[index], 'f', 2, 64)
 	}
-
-	message += "\n}\n\nLocation: "
-
+	
 	return message
 }

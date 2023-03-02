@@ -9,10 +9,12 @@ import (
 
 type User struct {
 	gorm.Model
-	ChatID    int64  `gorm:"unique" json:"chatid"`
-	SendMessage bool   `json:"sendmessage"`
-	Location  string `json:"location"`
-	Timer int    `json:"timer"`
+	ChatID              int64  `gorm:"unique" json:"chatid"`
+	SendMessage         bool   `json:"sendmessage"`
+	Location            string `json:"location"`
+	Latitude            string `json:"latitude"`
+	Longitude 		 	string `json:"longitude"`
+	Timer               int    `json:"timer"`
 	ApparentTemperature string `json:"apparenttemperature"`
 	RainingHours        int    `json:"raininghours"`
 	TotalRain           int    `json:"totalrain"`

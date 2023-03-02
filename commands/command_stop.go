@@ -23,17 +23,18 @@ func (c *CommandStop) Execute(ctx context.Context, b *bot.Bot, update *models.Up
 		ChatID: update.Message.Chat.ID,
 		Text:   "Stopping program...",
 	})
-	if err != nil {
-		return err
+	
+	if err == nil {
+		go func() {
+			b.EditMessageText(ctx, &bot.EditMessageTextParams{
+				ChatID:    update.Message.Chat.ID,
+				MessageID: msg.ID,
+				Text:      "Program stopped",
+			})
+		}()
 	}
 
-	go func() {
-		b.EditMessageText(ctx, &bot.EditMessageTextParams{
-			ChatID:    update.Message.Chat.ID,
-			MessageID: msg.ID,
-			Text:      "Program stopped",
-		})
-	}()
+	
 
 	globals.IsProgramStarted = false
 		
