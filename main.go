@@ -3,14 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
-	"github.com/JacklO0p/weather_forecast/api/location"
 	"github.com/JacklO0p/weather_forecast/api/telegram"
 	"github.com/JacklO0p/weather_forecast/api/telegram/listener"
 	"github.com/JacklO0p/weather_forecast/globals"
-	models2 "github.com/JacklO0p/weather_forecast/models"
+	"github.com/JacklO0p/weather_forecast/models"
 	"github.com/JacklO0p/weather_forecast/utils"
 	"github.com/go-telegram/bot"
 )
@@ -26,7 +24,8 @@ func main() {
 
 	duration := time.Duration(globals.Timer) * time.Minute
 
-	fmt.Print("duration: ", duration)
+	fmt.Print("duration: ", duration, "\n")
+
 	ticker := time.NewTicker(duration)
 	defer ticker.Stop()
 
@@ -34,12 +33,11 @@ func main() {
 		select {
 
 		case <-ticker.C:
-			if duration != time.Duration(globals.TimeFrame) * time.Minute {
-				duration = time.Duration(globals.TimeFrame) * time.Minute
+			if duration != time.Duration(globals.TimerDuration) * time.Minute {
+				duration = time.Duration(globals.TimerDuration) * time.Minute
 				ticker.Stop()
 			}
 
-			fmt.Print("new duration: ", duration)
 
 			ticker = time.NewTicker(duration)
 
@@ -48,11 +46,13 @@ func main() {
 
 			for _, u := range user {
 
-				if u.Location != "" && u.SendMessage {
+				if u.Location != "" && u.SendMessage  && globals.IsProgramStarted {
+					
+					globals.TimerDuration = time.Duration(u.Timer) * time.Minute
 
 					globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
 						ChatID: u.ChatID,
-						Text:   telegram.GetReport(u.Location) + u.Location,
+						Text:   telegram.GetReport(u.Location) + "\n\nLocation: " + u.Location + "\n\nNext report in " + globals.TimerDuration.String(),
 					})
 
 				}

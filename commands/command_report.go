@@ -2,8 +2,6 @@ package commands
 
 import (
 	"context"
-	"strconv"
-	"time"
 
 	"github.com/JacklO0p/weather_forecast/api/location"
 	"github.com/JacklO0p/weather_forecast/api/telegram"
@@ -44,20 +42,22 @@ func meteoReport(ctx context.Context, b *bot.Bot, update *models.Update) {
 				Text:   "Fetching weather data...",
 			})
 
-		if err == nil {
-			go func() {
-				b.EditMessageText(ctx, &bot.EditMessageTextParams{
-					ChatID:    update.Message.Chat.ID,
-					MessageID: msg.ID,
-					Text:      telegram.GetReport(user.Location) + user.Location,
-				})
-			}()
+			if err == nil {
+				go func() {
+					b.EditMessageText(ctx, &bot.EditMessageTextParams{
+						ChatID:    update.Message.Chat.ID,
+						MessageID: msg.ID,
+						Text:      telegram.GetReport(user.Location) + "\n\nLocation: " + user.Location + "\n\nNext report in " + globals.TimerDuration.String(),
+					})
+				}()
+			}
+
+		} else {
+			b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "No location set, type /location <location> to set one",
+			})
 		}
-		
-	} else {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "No location set, type /location <location> to set one",
-		})
 	}
+
 }

@@ -25,31 +25,48 @@ func (c *CommandProcessor) Process(ctx context.Context, b *bot.Bot, update *mode
 
 	if len(command) >= 1 {
 		check := strings.Split(command, " ")
-	fmt.Println("Comando non presente: " + check[0])
 
-		if check[0] == "/help" {
-			var list string
-			
-			for _, cmd := range c.commands {
-				list += "- " + cmd.Command() + "   |   " + cmd.Description() + "\n"
-			}
-
-				b.SendMessage(ctx, &bot.SendMessageParams{
-					ChatID: update.Message.Chat.ID,
-					Text:   "Command list:\n" + list,
-				})
-
-				return nil
-			}
+		if!globals.IsProgramStarted {
+			if check[0] == "/start" {
 
 			for _, cmd := range c.commands {
 				if check[0] == cmd.Command() {
 					return cmd.Execute(ctx, b, update, check[1:])
 				}
 			}
+			} else {
+				b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID: update.Message.Chat.ID,
+					Text:   "Program not started, /start to start the program",
+				})
+
+				return nil
+			}
+
+		} else {
+			if check[0] == "/help" {
+				var list string
+	
+				for _, cmd := range c.commands {
+					list += "- " + cmd.Command() + "   |   " + cmd.Description() + "\n"
+				}
+	
+				b.SendMessage(ctx, &bot.SendMessageParams{
+					ChatID: update.Message.Chat.ID,
+					Text:   "Command list:\n" + list,
+				})
+	
+				return nil
+			}
+	
+			for _, cmd := range c.commands {
+				if check[0] == cmd.Command() {
+					return cmd.Execute(ctx, b, update, check[1:])
+				}
+			}
+		}
 
 	}
-
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,

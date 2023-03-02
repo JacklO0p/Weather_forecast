@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 
+	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
@@ -25,6 +26,6 @@ func (c *CommandStart) Execute(ctx context.Context, b *bot.Bot, update *models.U
 	})
 
 	globals.IsProgramStarted = true
-	
+
 	return nil
 }

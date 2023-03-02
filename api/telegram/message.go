@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/JacklO0p/weather_forecast/api/weather"
+	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/JacklO0p/weather_forecast/models"
 )
 
@@ -18,7 +19,7 @@ func GetReport(loca string) string {
 
 	dividedMessage := DivideMessage(result)
 	if dividedMessage == "" {
-		return "No raining tomorrow\nLocation: " + loca
+		return "No raining tomorrow\n"
 	}
 
 	return dividedMessage
@@ -58,28 +59,32 @@ func isItRaining(weather models.Weather) bool {
 func userString(weather models.Weather) string {
 	var message string = ""
 
-	message += "RAIN ALERT!!\n\nWeather condition:\nT max {\n"
+	message += "RAIN ALERT!!\n\nWeather condition [\n\n    Temp max:  "
 	for index := range weather.Daily.ApparentTemperatureMax {
 		message += "    " + strconv.FormatFloat(weather.Daily.ApparentTemperatureMax[index], 'f', 2, 64)
 	}
 
-	message += "\n}\n\nT min {\n"
+	message += "\n\n    Temp min:  "
 
 	for index := range weather.Daily.ApparentTemperatureMax {
 		message += "    " + strconv.FormatFloat(weather.Daily.ApparentTemperatureMin[index], 'f', 2, 64)
 	}
 
-	message += "\n}\n\nPrecipitation hours {\n"
+	message += "\n\n    Hours of rain:  "
 
 	for index := range weather.Daily.PrecipitationHours {
 		message += "    " + strconv.Itoa(weather.Daily.PrecipitationHours[index])
 	}
 
-	message += "\n}\n\nRain sum {\n"
+	message += "\n\n    Total rain:  "
 
 	for index := range weather.Daily.RainSum {
 		message += "    " + strconv.FormatFloat(weather.Daily.RainSum[index], 'f', 2, 64)
 	}
+
+	message += "\n]"
+
+	message += "\n\nDate:  " + globals.CurrentDateString + "  /  " + globals.TomorrowDateString
 	
 	return message
 }
