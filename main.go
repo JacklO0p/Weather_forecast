@@ -24,7 +24,7 @@ func main() {
 	listener.Inizializer()
 	go listener.TelegramListener()
 
-	duration := time.Duration(globals.TimeFrame) * time.Minute
+	duration := time.Duration(globals.Timer) * time.Minute
 
 	ticker := time.NewTicker(duration)
 	defer ticker.Stop()
@@ -33,8 +33,8 @@ func main() {
 		select {
 
 		case <-ticker.C:
-			if duration != time.Duration(globals.TimeFrame) * time.Minute {
-				duration = time.Duration(globals.TimeFrame) * time.Minute
+			if duration != time.Duration(globals.Timer) * time.Minute {
+				duration = time.Duration(globals.Timer) * time.Minute
 				ticker.Stop()
 			}
 
@@ -43,23 +43,26 @@ func main() {
 
 			ticker = time.NewTicker(duration)
 
-			var user []models.User
-			globals.Db.Find(&user)
-
-			for _, u := range user {
-
-				if u.Location != "" && u.SendMessage {
-
-					globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
-						ChatID: u.ChatID,
-						Text:   telegram.GetReport(u.Location) + u.Location,
-					})
-
+			if globals.IsProgramStarted {
+				var user []models.User
+				globals.Db.Find(&user)
+	
+				for _, u := range user {
+	
+					if u.Location != "" && u.SendMessage {
+	
+						globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
+							ChatID: u.ChatID,
+							Text:   telegram.GetReport(u.Location) + u.Location,
+						})
+	
+					}
+	
 				}
-
+	
+				fmt.Print("\nReport sent successfully\n")
 			}
-
-			fmt.Print("\nReport sent successfully\n")
+			
 		}
 	}
 

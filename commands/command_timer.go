@@ -45,11 +45,15 @@ func (c *CommandTimer) Execute(ctx context.Context, b *bot.Bot, update *models.U
 			Text:   "New timer: " + strconv.Itoa(newTimer),
 		})
 
+		globals.Timer = newTimer
+
 	} else {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Current timer: " + strconv.Itoa(currTimer),
 		})
+
+		globals.Timer = currTimer
 	}
 	
 
