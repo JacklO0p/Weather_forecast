@@ -43,7 +43,7 @@ func meteoReport(ctx context.Context, b *bot.Bot, update *models.Update) {
 				b.EditMessageText(ctx, &bot.EditMessageTextParams{
 					ChatID:    update.Message.Chat.ID,
 					MessageID: msg.ID,
-					Text:      telegram.GetReport(user.Location) + user.Location,
+					Text:      telegram.GetReport(user.Location),
 				})
 			}()
 		}

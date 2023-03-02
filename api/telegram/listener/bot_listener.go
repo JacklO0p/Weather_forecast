@@ -122,10 +122,9 @@ func TelegramListener() {
 
 	cmds.AddCommand(&commands.CommandStart{})
 	cmds.AddCommand(&commands.CommandTimer{})
-	cmds.AddCommand(&commands.CommandNewTimer{})
 	cmds.AddCommand(&commands.CommandReport{})
-	cmds.AddCommand(&commands.CommandNewLocation{})
 	cmds.AddCommand(&commands.CommandLocation{})
+	cmds.AddCommand(&commands.CommandStop{})
 	
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 

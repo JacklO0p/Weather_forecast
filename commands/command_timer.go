@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/JacklO0p/weather_forecast/globals"
@@ -17,7 +18,7 @@ func (c *CommandTimer) Command() string {
 }
 
 func (c *CommandTimer) Description() string {
-	return "Display the current timer"
+	return "Display the current timer or set a new timer"
 }
 
 func (c *CommandTimer) Execute(ctx context.Context, b *bot.Bot, update *models.Update, args []string) error {
@@ -29,10 +30,28 @@ func (c *CommandTimer) Execute(ctx context.Context, b *bot.Bot, update *models.U
 
 	currTimer := user.Timer
 
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text:   "Current timer: " + strconv.Itoa(currTimer),
-	})
+	if len(args) != 0 {
+		newTimer, err := strconv.Atoi(args[0])
+		
+		if err != nil {
+			fmt.Print("Error: ", err)
+		}
+
+		user.Timer = newTimer
+		globals.Db.Save(&user)
+
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "New timer: " + strconv.Itoa(newTimer),
+		})
+
+	} else {
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "Current timer: " + strconv.Itoa(currTimer),
+		})
+	}
+	
 
 	return nil
 }

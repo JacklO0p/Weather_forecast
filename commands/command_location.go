@@ -28,10 +28,20 @@ func (c *CommandLocation) Execute(ctx context.Context, b *bot.Bot, update *model
 
 	loc := user.Location
 
-	b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text:   "Current location: " + loc,
-	})
+	if len(args) != 0 {
+		user.Location = args[0]
+		globals.Db.Save(&user)
+
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "New location: " + args[0],
+		})
+	} else {
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "Current location: " + loc,
+		})
+	}
 
 	return nil
 }
