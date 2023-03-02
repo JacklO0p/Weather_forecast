@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 
-	"github.com/JacklO0p/weather_forecast/globals"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
@@ -19,12 +18,13 @@ func (c *CommandStart) Description() string {
 }
 
 func (c *CommandStart) Execute(ctx context.Context, b *bot.Bot, update *models.Update, args []string) error {
-	globals.IsProgramStarted = true
-	
+
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
-		Text: "Program started, /help for the list of all possible commands",
+		Text:   "Program started, /help for the list of all possible commands",
 	})
 
+	globals.IsProgramStarted = true
+	
 	return nil
 }

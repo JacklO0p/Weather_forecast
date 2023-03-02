@@ -25,19 +25,14 @@ func (c *CommandProcessor) Process(ctx context.Context, b *bot.Bot, update *mode
 
 	if len(command) >= 1 {
 		check := strings.Split(command, " ")
+	fmt.Println("Comando non presente: " + check[0])
 
-		if !globals.IsProgramStarted  && check[0] != "/start" {
-			b.SendMessage(ctx, &bot.SendMessageParams{
-				ChatID: update.Message.Chat.ID,
-				Text:   "Program not started, /start to start it",
-			})
-		} else {
-			if check[0] == "/help" {
-				var list string
-
-				for _, cmd := range c.commands {
-					list += "- " + cmd.Command() + "   |   " + cmd.Description() + "\n"
-				}
+		if check[0] == "/help" {
+			var list string
+			
+			for _, cmd := range c.commands {
+				list += "- " + cmd.Command() + "   |   " + cmd.Description() + "\n"
+			}
 
 				b.SendMessage(ctx, &bot.SendMessageParams{
 					ChatID: update.Message.Chat.ID,
@@ -53,16 +48,13 @@ func (c *CommandProcessor) Process(ctx context.Context, b *bot.Bot, update *mode
 				}
 			}
 
-		}
-
-	} else {
-		b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "Command not found, /help to see the commands available",
-		})
 	}
 
-	
+
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID: update.Message.Chat.ID,
+		Text:   "Comando non presentte, /help per lista dei comandi",
+	})
 
 	return nil
 }

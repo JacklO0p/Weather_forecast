@@ -2,7 +2,10 @@ package commands
 
 import (
 	"context"
+	"strconv"
+	"time"
 
+	"github.com/JacklO0p/weather_forecast/api/location"
 	"github.com/JacklO0p/weather_forecast/api/telegram"
 	"github.com/JacklO0p/weather_forecast/globals"
 	models2 "github.com/JacklO0p/weather_forecast/models"
@@ -33,21 +36,24 @@ func meteoReport(ctx context.Context, b *bot.Bot, update *models.Update) {
 	globals.Db.Where(&user).First(&user)
 
 	if user.Location != "" {
-		msg, err := b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "Fetching weather data...",
-		})
+
+		if location.IsValid(user.Location) {
+
+			msg, err := b.SendMessage(ctx, &bot.SendMessageParams{
+				ChatID: update.Message.Chat.ID,
+				Text:   "Fetching weather data...",
+			})
 
 		if err == nil {
 			go func() {
 				b.EditMessageText(ctx, &bot.EditMessageTextParams{
 					ChatID:    update.Message.Chat.ID,
 					MessageID: msg.ID,
-					Text:      telegram.GetReport(user.Location) + "\n\nLocation: " + user.Location + "\n\nNext report in " + globals.TimerDuration.String(),
+					Text:      telegram.GetReport(user.Location) + user.Location,
 				})
 			}()
 		}
-
+		
 	} else {
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,

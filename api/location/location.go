@@ -14,7 +14,7 @@ import (
 func GetCoordinates(loca string) (latitude float64, longitude float64, err error) {
 	var res *http.Response
 
-	if isValid(loca) {
+	if IsValid(loca) {
 		res, err = http.Get("https://nominatim.openstreetmap.org/search/" + url.QueryEscape(loca) + "?format=json&addressdetails=1&limit=1")
 	} else {
 		return -100000000, -100000000, nil
@@ -61,7 +61,7 @@ func GetCoordinates(loca string) (latitude float64, longitude float64, err error
 	return latitude, longitude, nil
 }
 
-func isValid(city string) bool {
+func IsValid(city string) bool {
 
 	res, err := http.Get("http://www.weather-forecast.com/locations/ac_location_name?query=" + url.QueryEscape(city))
 	if err != nil {

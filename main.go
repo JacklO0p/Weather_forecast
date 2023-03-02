@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
+	"github.com/JacklO0p/weather_forecast/api/location"
 	"github.com/JacklO0p/weather_forecast/api/telegram"
 	"github.com/JacklO0p/weather_forecast/api/telegram/listener"
 	"github.com/JacklO0p/weather_forecast/globals"
-	"github.com/JacklO0p/weather_forecast/models"
+	models2 "github.com/JacklO0p/weather_forecast/models"
 	"github.com/JacklO0p/weather_forecast/utils"
 	"github.com/go-telegram/bot"
 )
@@ -19,13 +21,12 @@ func main() {
 	utils.Connect()
 	utils.MigrateDB()
 
-	//start telegram bot listener
-	globals.IsProgramStarted = false
 	listener.Inizializer()
 	go listener.TelegramListener()
 
 	duration := time.Duration(globals.Timer) * time.Minute
 
+	fmt.Print("duration: ", duration)
 	ticker := time.NewTicker(duration)
 	defer ticker.Stop()
 
@@ -33,38 +34,32 @@ func main() {
 		select {
 
 		case <-ticker.C:
-			if duration != time.Duration(globals.Timer) * time.Minute {
-				duration = time.Duration(globals.Timer) * time.Minute
+			if duration != time.Duration(globals.TimeFrame) * time.Minute {
+				duration = time.Duration(globals.TimeFrame) * time.Minute
 				ticker.Stop()
 			}
 
 			fmt.Print("new duration: ", duration)
 
-
 			ticker = time.NewTicker(duration)
 
-			if globals.IsProgramStarted {
-				var user []models.User
-				globals.Db.Find(&user)
-	
-				for _, u := range user {
-	
-					if u.Location != "" && u.SendMessage {
+			var user []models.User
+			globals.Db.Find(&user)
 
-						globals.TimerDuration = time.Duration(u.Timer) * time.Minute
+			for _, u := range user {
 
-						globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
-							ChatID: u.ChatID,
-							Text:   telegram.GetReport(u.Location) + "\n\nLocation: " + u.Location + "\n\nNext report in " + globals.TimerDuration.String(),
-						})
-	
-					}
-	
+				if u.Location != "" && u.SendMessage {
+
+					globals.Bot.SendMessage(context.Background(), &bot.SendMessageParams{
+						ChatID: u.ChatID,
+						Text:   telegram.GetReport(u.Location) + u.Location,
+					})
+
 				}
-	
-				fmt.Print("\nReport sent successfully\n")
+
 			}
-			
+
+			fmt.Print("\nReport sent successfully\n")
 		}
 	}
 
